@@ -1,0 +1,37 @@
+#!/bin/bash
+
+clear
+
+LangName="Danish"
+echo "------------------------------------------------------------"
+echo " Tux TTS "$LangName" voice files installation wizard"
+echo "------------------------------------------------------------"
+
+chk_root () {
+  if [ ! $( id -u ) -eq 0 ]; then
+    echo "Please enter root password."
+	exec su -c "${0}"
+	exit ${?}
+  fi
+}
+chk_root
+echo -n "Old "$LangName" voice files will be deleted, continue? [y/n]"
+read ans
+if [ $ans != "y" ] && [ $ans != "Y" ]
+then
+    echo "No changes made, exiting."
+    exit 0
+fi
+
+if [ -d "/opt/Acapela/TelecomTTS/babtts/engines/"$LangName ]
+then
+	rm -fR /opt/Acapela/TelecomTTS/babtts/engines/$LangName  || exit 1
+fi
+if [ ! -d "/opt/Acapela/TelecomTTS/babtts/engines" ]
+then
+    mkdir -p /opt/Acapela/TelecomTTS/babtts/engines || exit 1
+fi
+
+cp -R $LangName /opt/Acapela/TelecomTTS/babtts/engines || exit 1
+
+echo "New voice files copied."

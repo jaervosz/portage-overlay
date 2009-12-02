@@ -1,0 +1,18 @@
+WIZARD INSTALLATION
+
+Just run ./WIZARD as root.
+
+MANUAL INSTALLATION
+
+Copy the 'Danish' folder to
+'/opt/Acapela/TelecomTTS/babtts/engines/Danish'
+
+Run the following commands as root:
+    mkdir -p /opt/Acapela/TelecomTTS/babtts/engines/
+    cp Danish /opt/Acapela/TelecomTTS/babtts/engines/
+    chown -R root:root /opt/Acapela/
+
+NOTICE
+
+Only two languages can be loaded at same time during an 
+instance of tuxttsdaemon (plug and unplug of the dongle)
