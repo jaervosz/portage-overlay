@@ -97,7 +97,7 @@ src_prepare() {
 	# fix for bug #292421 & #279944
 	epatch "${FILESDIR}/${PN}-0.22-x86-no-fpic.patch"
 
-	#HD stuttering
+	#Missing sound on Ramasjang
 	epatch "${FILESDIR}/libavformat_7481.diff"
 
 	# DR update stuttering
