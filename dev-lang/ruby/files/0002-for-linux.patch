@@ -1,0 +1,85 @@
+--- a/eval.c
++++ b/eval.c
+@@ -12348,7 +12348,7 @@ rb_thread_start_timer()
+     safe_mutex_lock(&time_thread.lock);
+     if (pthread_create(&time_thread.thread, 0, thread_timer, args) == 0) {
+ 	thread_init = 1;
+-#ifndef __NetBSD__
++#if !defined(__NetBSD__) && !defined(linux)
+ 	pthread_atfork(0, 0, rb_thread_stop_timer);
+ #endif
+ 	pthread_cond_wait(&start, &time_thread.lock);
+diff --git a/io.c b/io.c
+index a287d78..ac98499 100644
+--- a/io.c
++++ b/io.c
+@@ -3245,7 +3245,7 @@ retry:
+     }
+ 
+   retry:
+-#ifdef __NetBSD__
++#if defined(__NetBSD__) || defined(linux)
+     rb_thread_stop_timer();
+ #endif
+     switch ((pid = fork())) {
+@@ -3275,7 +3275,7 @@ retry:
+ 		    ruby_sourcefile, ruby_sourceline, pname);
+ 	    _exit(127);
+ 	}
+-#ifdef __NetBSD__
++#if defined(__NetBSD__) || defined(linux)
+ 	rb_thread_start_timer();
+ #endif
+ 	rb_io_synchronized(RFILE(orig_stdout)->fptr);
+@@ -3283,7 +3283,7 @@ retry:
+ 	return Qnil;
+ 
+       case -1:			/* fork failed */
+-#ifdef __NetBSD__
++#if defined(__NetBSD__) || defined(linux)
+ 	rb_thread_start_timer();
+ #endif
+ 	if (errno == EAGAIN) {
+@@ -3306,7 +3306,7 @@ retry:
+ 	break;
+ 
+       default:			/* parent */
+-#ifdef __NetBSD__
++#if defined(__NetBSD__) || defined(linux)
+ 	rb_thread_start_timer();
+ #endif
+ 	if (pid < 0) rb_sys_fail(pname);
+diff --git a/process.c b/process.c
+index 22593c8..6ad34c2 100644
+--- a/process.c
++++ b/process.c
+@@ -1330,7 +1330,7 @@ rb_f_fork(obj)
+     fflush(stderr);
+ #endif
+ 
+-#ifdef __NetBSD__
++#if defined(__NetBSD__) || defined(linux)
+     before_exec();
+     pid = fork();
+     after_exec();
+@@ -1577,7 +1577,7 @@ rb_f_system(argc, argv)
+ 
+     chfunc = signal(SIGCHLD, SIG_DFL);
+   retry:
+-#ifdef __NetBSD__
++#if defined(__NetBSD__) || defined(linux)
+     before_exec();
+ #endif
+     pid = fork();
+@@ -1587,7 +1587,7 @@ rb_f_system(argc, argv)
+ 	rb_protect(proc_exec_args, (VALUE)&earg, NULL);
+ 	_exit(127);
+     }
+-#ifdef __NetBSD__
++#if defined(__NetBSD__) || defined(linux)
+     after_exec();
+ #endif
+     if (pid < 0) {
+-- 
+1.7.0
+
