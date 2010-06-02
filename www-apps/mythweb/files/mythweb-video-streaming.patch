@@ -1,0 +1,196 @@
+--- mythweb/modules/_shared/tmpl/_errors/db_vars_error.php.orig	2010-01-21 08:04:22.000000000 +0100
++++ mythweb/modules/_shared/tmpl/_errors/db_vars_error.php	2010-01-26 20:14:41.000000000 +0100
+@@ -21,5 +21,5 @@
+ 
+ // Print the page header
+-    require 'modules/_shared/tmpl/'.tmpl.'/header.php';
++    //require 'modules/_shared/tmpl/'.tmpl.'/header.php';
+ ?>
+ 
+--- mythweb/modules/stream/handler.pl.orig 2010-01-21 08:04:22.000000000 +0100
++++ mythweb/modules/stream/handler.pl	2010-03-10 15:29:06.000000000 +0100
+@@ -14,4 +14,10 @@
+ # Other includes
+     use Sys::Hostname;
++# hack to allow lighttpd to log cgi errors
++# http://redmine.lighttpd.net/boards/2/topics/16
++    my $logfile = ">>/var/log/lighttpd/mycgi-log";
++    use CGI::Carp qw(carpout);
++    open(LOG, $logfile) or  print header(), "Unable to open log $logfile.";
++    carpout(LOG);
+ 
+     require "modules/$Path[0]/tv.pl";
+--- mythweb/modules/stream/stream_raw.pl.orig	2010-01-21 08:04:22.000000000 +0100
++++ mythweb/modules/stream/stream_raw.pl	2010-03-10 14:08:48.000000000 +0100
+@@ -35,4 +35,12 @@
+         $suffix = '.nuv';
+     }
++    elsif ($basename =~ /\.avi$/) {
++        $type   = 'video/avi';
++        $suffix = '.avi';
++    }
++    elsif ($basename =~ /\.mp4$/) {
++        $type   = 'video/avi';
++        $suffix = '.mp4';
++    }
+     else {
+         print header(),
+@@ -50,5 +58,6 @@
+             }
+         }
+-        $name .= $suffix;
++	#https://bugs.launchpad.net/mythbuntu/+bug/511653
++        #$name .= $suffix;
+     }
+ 
+Only in ./stream: stream_raw.pl.orig
+--- mythweb/modules/stream/tv.pl.orig	2010-01-21 08:04:22.000000000 +0100
++++ mythweb/modules/stream/tv.pl	2010-03-10 14:26:16.000000000 +0100
+@@ -19,40 +19,69 @@
+     }
+ 
+-# Which show are we streaming?
+-    our $chanid    = url_param('chanid');
+-    our $starttime = url_param('starttime');
+-    if ($Path[1]) {
+-        $chanid    = $Path[1];
+-        $starttime = $Path[2];
+-        $starttime =~ s/\.\w+$//;
+-    }
++# Determine wether we're streaming video or tv
+ 
+-# Get the basename from the database
+-    my $sh = $dbh->prepare('SELECT basename, title, subtitle, endtime-starttime
+-                              FROM recorded
+-                             WHERE starttime=FROM_UNIXTIME(?)
+-                                   AND recorded.chanid   = ?');
+-    $sh->execute($starttime, $chanid);
+-    our ($basename, $title, $subtitle, $runtime) = $sh->fetchrow_array();
+-    $sh->finish;
+-
+-# No match?
+-    unless ($basename =~ /\w/) {
+-        print header(),
+-              "Unknown recording requested.\n";
+-        exit;
+-    }
++if ($Path[2]) {
++	$type = "tv";	
++} elsif ($Path[1]) {
++	$type = "video";	
++}
+ 
+-# Find the local file
+-    our $filename;
+-    $sh = $dbh->prepare('SELECT DISTINCT dirname
+-                           FROM storagegroup');
+-    $sh->execute();
+-    while (my ($video_dir) = $sh->fetchrow_array()) {
+-        next unless (-e "$video_dir/$basename");
+-        $filename = "$video_dir/$basename";
+-        last;
+-    }
+-    $sh->finish;
++if ( $type eq "tv" ) {
++	# Which show are we streaming?
++	    our $chanid    = url_param('chanid');
++	    our $starttime = url_param('starttime');
++	    if ($Path[1]) {
++		$chanid    = $Path[1];
++		$starttime = $Path[2];
++		$starttime =~ s/\.\w+$//;
++	    }
++
++	# Get the basename from the database
++	    my $sh = $dbh->prepare('SELECT basename, title, subtitle, endtime-starttime
++				      FROM recorded
++				     WHERE starttime=FROM_UNIXTIME(?)
++					   AND recorded.chanid   = ?');
++	    $sh->execute($starttime, $chanid);
++	    our ($basename, $title, $subtitle, $runtime) = $sh->fetchrow_array();
++	    $sh->finish;
++
++	# Find the local file
++	    our $filename;
++	    $sh = $dbh->prepare('SELECT DISTINCT dirname
++				   FROM storagegroup');
++	    $sh->execute();
++	    while (my ($video_dir) = $sh->fetchrow_array()) {
++		next unless (-e "$video_dir/$basename");
++		$filename = "$video_dir/$basename";
++		last;
++	    }
++	    $sh->finish;
++
++	    1;
++} elsif ( $type eq "video" ) {
++	# Which show are we streaming?
++	    our $vidid     = url_param('vidid');
++	    if ($Path[1]) {
++		$vidid     = $Path[1];
++	    }
++	# Get the basename from the database
++	    my $sh = $dbh->prepare('SELECT title, subtitle, filename
++				     FROM videometadata
++				     WHERE intid = ?');
++	    $sh->execute($vidid);
++	    our ($title, $subtitle, $basename) = $sh->fetchrow_array();
++	    $sh->finish;
++
++	# Find the local file
++	    our $filename;
++	    $sh = $dbh->prepare('SELECT DISTINCT dirname
++				   FROM storagegroup
++				   WHERE groupname = "Videos"');
++	    $sh->execute();
++	    my $video_dir = $sh->fetchrow_array();
++		$filename = "$video_dir/$basename";
++
++	    $sh->finish;
+ 
+-    1;
++	    1;
++}
+--- mythweb/modules/video/handler.php.orig	2010-01-21 08:04:22.000000000 +0100
++++ mythweb/modules/video/handler.php	2010-03-04 10:58:48.000000000 +0100
+@@ -120,5 +120,6 @@
+         foreach ($dirs as $dir) {
+             if ($dir) {
+-                if(strpos($file, $dir) !== false) {
++		#Disable since $file and $dir doesn't overlap
++                #if(strpos($file, $dir) != false) {
+                     if (!isset($PATH_TREE[$dir]))
+                         $PATH_TREE[$dir] = array('display' => $dir,
+@@ -128,5 +129,5 @@
+                     $file = str_replace($dir, '', $file);
+                     break;
+-                }
++                #}
+             }
+         }
+@@ -150,4 +151,6 @@
+ 
+     function output_path_picker($path, $padding=0) {
++    	#Hide VideoStartupDir
++    	$path=str_replace(setting('VideoStartupDir', hostname),"",$path);
+         for ($i = 0; $i < $padding; $i++)
+             echo '&nbsp;';
+Only in ./video: handler.php.orig
+--- mythweb/modules/video/tmpl/default/video.php.orig	2010-03-04 09:41:38.000000000 +0100
++++ mythweb/modules/video/tmpl/default/video.php	2010-03-10 13:57:53.000000000 +0100
+@@ -296,4 +296,5 @@
+  <a class="<?php if (!isset($_SESSION['video']['path']) || $_SESSION['video']['path'] == '/') echo 'active'; ?>" href="<?php echo root_url; ?>video?path=/">All Videos</a><br>
+  <?php foreach ($PATH_TREE as $path) output_path_picker($path); ?>
++
+ </div>
+ 
+@@ -306,5 +307,8 @@
+         <div id="<?php echo $video->intid; ?>_browse" class="hidden"><?php echo $video->browse; ?></div>
+         <div id="<?php echo $video->intid; ?>-title" class="title">
+-            <a href="<?php echo $video->url; ?>"><?php echo html_entities($video->title); ?></a><?php 
++<?php echo html_entities($video->title); ?>
++            <a href="<?php echo $video->url; ?>"><img src="<?php echo skin_url ?>/img/video_sm.png"></a>
++            <a href="<?php echo ".//pl/stream/$video->intid" . ".asx"; ?>"><img src="<?php echo skin_url ?>/img/play_sm.png">
++	    </a><?php 
+                   if (($video->season > 0) && ($video->episode >= 0)) 
+                       printf('(S%02d E%02d)', $video->season, $video->episode); 
