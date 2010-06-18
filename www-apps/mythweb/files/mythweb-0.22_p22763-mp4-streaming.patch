@@ -1,0 +1,24 @@
+--- mythweb/modules/stream/stream_raw.pl.orig	2010-01-21 08:04:22.000000000 +0100
++++ mythweb/modules/stream/stream_raw.pl	2010-03-10 14:08:48.000000000 +0100
+@@ -35,4 +35,12 @@
+         $suffix = '.nuv';
+     }
++    elsif ($basename =~ /\.avi$/) {
++        $type   = 'video/avi';
++        $suffix = '.avi';
++    }
++    elsif ($basename =~ /\.mp4$/) {
++        $type   = 'video/avi';
++        $suffix = '.mp4';
++    }
+     else {
+         print header(),
+@@ -50,5 +58,6 @@
+             }
+         }
+-        $name .= $suffix;
++	#https://bugs.launchpad.net/mythbuntu/+bug/511653
++        #$name .= $suffix;
+     }
+ 
+Only in ./stream: stream_raw.pl.orig

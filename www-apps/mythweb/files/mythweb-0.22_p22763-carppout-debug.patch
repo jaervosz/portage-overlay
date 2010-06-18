@@ -1,0 +1,13 @@
+--- mythweb/modules/stream/handler.pl.orig 2010-01-21 08:04:22.000000000 +0100
++++ mythweb/modules/stream/handler.pl	2010-03-10 15:29:06.000000000 +0100
+@@ -14,4 +14,10 @@
+ # Other includes
+     use Sys::Hostname;
++# hack to allow lighttpd to log cgi errors
++# http://redmine.lighttpd.net/boards/2/topics/16
++    my $logfile = ">>/var/log/lighttpd/mycgi-log";
++    use CGI::Carp qw(carpout);
++    open(LOG, $logfile) or  print header(), "Unable to open log $logfile.";
++    carpout(LOG);
+ 
+     require "modules/$Path[0]/tv.pl";
