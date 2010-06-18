@@ -1,0 +1,45 @@
+# ChangeLog for sys-cluster/glusterfs
+# Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
+# $Header: /var/cvsroot/gentoo-x86/sys-cluster/glusterfs/ChangeLog,v 1.9 2010/02/22 22:31:39 alexxy Exp $
+
+*glusterfs-3.0.2 (22 Feb 2010)
+
+  22 Feb 2010; Alexey Shvetsov <alexxy@gentoo.org> -glusterfs-2.0.8.ebuild,
+  -glusterfs-3.0.0.ebuild, +glusterfs-3.0.2.ebuild:
+  Version bump per bug #304261
+
+  05 Feb 2010; Alexey Shvetsov <alexxy@gentoo.org> glusterfs-3.0.0.ebuild:
+  Fix bug #300122
+
+*glusterfs-3.0.0 (14 Dec 2009)
+
+  14 Dec 2009; Alexey Shvetsov <alexxy@gentoo.org> +glusterfs-3.0.0.ebuild:
+  Version bump
+
+  02 Dec 2009; Alexey Shvetsov <alexxy@gentoo.org> files/glusterfs.initd:
+  Update init.d as asked by Elvanor
+
+  25 Nov 2009; Alexey Shvetsov <alexxy@gentoo.org> glusterfs-2.0.8.ebuild:
+  Update infiniband deps
+
+*glusterfs-2.0.8 (25 Nov 2009)
+
+  25 Nov 2009; Alexey Shvetsov <alexxy@gentoo.org> +glusterfs-2.0.8.ebuild,
+  metadata.xml:
+  Version bump per bug #290713
+
+  23 Sep 2009; Alexey Shvetsov <alexxy@gentoo.org> glusterfs-2.0.6.ebuild:
+  Drop berkdb support since its unstable for current glusterfs version
+
+  22 Sep 2009; Alexey Shvetsov <alexxy@gentoo.org> files/glusterfs.initd:
+  Update init script
+
+*glusterfs-2.0.6 (22 Sep 2009)
+
+  22 Sep 2009; Alexey Shvetsov <alexxy@gentoo.org>
+  +files/50glusterfs-mode-gentoo.el, +glusterfs-2.0.6.ebuild,
+  +files/glusterfs-2.0.6-docdir.patch,
+  +files/glusterfs-2.0.6-parallel-make.patch, +files/glusterfs.confd,
+  +files/glusterfs.initd, +files/glusterfs.vim, +metadata.xml:
+  Version bump per bug #167955
+
