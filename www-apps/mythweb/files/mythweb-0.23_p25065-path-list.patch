@@ -1,0 +1,25 @@
+--- mythweb/modules/video/handler.php.orig	2010-01-21 08:04:22.000000000 +0100
++++ mythweb/modules/video/handler.php	2010-03-04 10:58:48.000000000 +0100
+@@ -120,5 +120,6 @@
+         foreach ($dirs as $dir) {
+             if ($dir) {
+-                if(strpos($file, $dir) !== false) {
++		#Disable since $file and $dir doesn't overlap
++                #if(strpos($file, $dir) != false) {
+                     if (!isset($PATH_TREE[$dir]))
+                         $PATH_TREE[$dir] = array('display' => $dir,
+@@ -128,5 +129,5 @@
+                     $file = str_replace($dir, '', $file);
+                     break;
+-                }
++                #}
+             }
+         }
+@@ -150,4 +151,6 @@
+ 
+     function output_path_picker($path, $padding=0) {
++    	#Hide VideoStartupDir
++    	$path=str_replace(setting('VideoStartupDir', hostname),"",$path);
+         for ($i = 0; $i < $padding; $i++)
+             echo '&nbsp;';
+Only in ./video: handler.php.orig
