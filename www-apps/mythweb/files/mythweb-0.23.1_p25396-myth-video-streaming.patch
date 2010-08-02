@@ -1,0 +1,119 @@
+--- mythplugins/mythweb/modules/stream/tv.pl.orig	2010-06-22 19:43:19.000000000 +0200
++++ mythplugins/mythweb/modules/stream/tv.pl	2010-06-22 19:41:15.000000000 +0200
+@@ -19,40 +19,69 @@
+     }
+ 
+-# Which show are we streaming?
+-    our $chanid    = url_param('chanid');
+-    our $starttime = url_param('starttime');
+-    if ($Path[1]) {
+-        $chanid    = $Path[1];
+-        $starttime = $Path[2];
+-        $starttime =~ s/\.\w+$//;
+-    }
++# Determine wether we're streaming video or tv
+ 
+-# Get the basename from the database
+-    my $sh = $dbh->prepare('SELECT basename, title, subtitle, endtime-starttime
+-                              FROM recorded
+-                             WHERE starttime=FROM_UNIXTIME(?)
+-                                   AND recorded.chanid   = ?');
+-    $sh->execute($starttime, $chanid);
+-    our ($basename, $title, $subtitle, $runtime) = $sh->fetchrow_array();
+-    $sh->finish;
+-
+-# No match?
+-    unless ($basename =~ /\w/) {
+-        print header(),
+-              "Unknown recording requested.\n";
+-        exit;
+-    }
++if ($Path[2]) {
++	$type = "tv";	
++} elsif ($Path[1]) {
++	$type = "video";	
++}
+ 
+-# Find the local file
+-    our $filename;
+-    $sh = $dbh->prepare('SELECT DISTINCT dirname
+-                           FROM storagegroup');
+-    $sh->execute();
+-    while (my ($video_dir) = $sh->fetchrow_array()) {
+-        next unless (-e "$video_dir/$basename");
+-        $filename = "$video_dir/$basename";
+-        last;
+-    }
+-    $sh->finish;
++if ( $type eq "tv" ) {
++	# Which show are we streaming?
++	    our $chanid    = url_param('chanid');
++	    our $starttime = url_param('starttime');
++	    if ($Path[1]) {
++		$chanid    = $Path[1];
++		$starttime = $Path[2];
++		$starttime =~ s/\.\w+$//;
++	    }
++
++	# Get the basename from the database
++	    my $sh = $dbh->prepare('SELECT basename, title, subtitle, endtime-starttime
++				      FROM recorded
++				     WHERE starttime=FROM_UNIXTIME(?)
++					   AND recorded.chanid   = ?');
++	    $sh->execute($starttime, $chanid);
++	    our ($basename, $title, $subtitle, $runtime) = $sh->fetchrow_array();
++	    $sh->finish;
++
++	# Find the local file
++	    our $filename;
++	    $sh = $dbh->prepare('SELECT DISTINCT dirname
++				   FROM storagegroup');
++	    $sh->execute();
++	    while (my ($video_dir) = $sh->fetchrow_array()) {
++		next unless (-e "$video_dir/$basename");
++		$filename = "$video_dir/$basename";
++		last;
++	    }
++	    $sh->finish;
++
++	    1;
++} elsif ( $type eq "video" ) {
++	# Which show are we streaming?
++	    our $vidid     = url_param('vidid');
++	    if ($Path[1]) {
++		$vidid     = $Path[1];
++	    }
++	# Get the basename from the database
++	    my $sh = $dbh->prepare('SELECT title, subtitle, filename
++				     FROM videometadata
++				     WHERE intid = ?');
++	    $sh->execute($vidid);
++	    our ($title, $subtitle, $basename) = $sh->fetchrow_array();
++	    $sh->finish;
++
++	# Find the local file
++	    our $filename;
++	    $sh = $dbh->prepare('SELECT DISTINCT dirname
++				   FROM storagegroup
++				   WHERE groupname = "Videos"');
++	    $sh->execute();
++	    my $video_dir = $sh->fetchrow_array();
++		$filename = "$video_dir/$basename";
++
++	    $sh->finish;
+ 
+-    1;
++	    1;
++}
+--- mythplugins/mythweb/modules/video/tmpl/default/video.php.orig	2010-06-22 19:20:59.000000000 +0200
++++ mythplugins/mythweb/modules/video/tmpl/default/video.php	2010-06-22 19:21:25.000000000 +0200
+@@ -313,5 +313,8 @@
+         <div id="<?php echo $video->intid; ?>_browse" class="hidden"><?php echo $video->browse; ?></div>
+         <div id="<?php echo $video->intid; ?>-title" class="title">
+-            <a href="<?php echo $video->url; ?>"><?php echo html_entities($video->title); ?></a><?php
++		  <?php echo html_entities($video->title); ?>
++		  <a href="<?php echo $video->url; ?>"><img src="<?php echo skin_url ?>/img/video_sm.png"></a>
++		  <a href="<?php echo ".//pl/stream/$video->intid" . ".asx"; ?>"><img src="<?php echo skin_url ?>/img/play_sm.png">
++		  </a><?php
+                   if (($video->season > 0) && ($video->episode >= 0))
+                       printf('(S%02d E%02d)', $video->season, $video->episode);
