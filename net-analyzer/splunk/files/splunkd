@@ -1,0 +1,22 @@
+#!/sbin/runscript
+
+depend() {
+   after logger
+}
+
+start() {
+   ebegin "Starting Splunk"
+   /opt/splunk/bin/splunk start
+   eend $?
+}
+
+stop() {
+   ebegin "Stopping Splunk"
+   /opt/splunk/bin/splunk stop
+   eend $?
+}
+
+status() {
+   /opt/splunk/bin/splunk status
+   eend $?
+}
