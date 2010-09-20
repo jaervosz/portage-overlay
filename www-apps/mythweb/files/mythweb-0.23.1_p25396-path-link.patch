@@ -1,0 +1,14 @@
+--- mythweb/modules/video/handler.php	2010-08-30 18:34:34.000000000 +0200
++++ mythweb/modules/video/handler.php	2010-09-20 20:25:33.000000000 +0200
+@@ -149,5 +149,10 @@
+                     $p = '';
+                     for ($i=0; $i<=$key;$i++) {
+-                        $p .=$paths[$i];
++		    	// Hack to allow more than two subdirectories
++		    	if ($i!=0) {
++				$p .="/$paths[$i]";
++			} else {
++				$p .=$paths[$i];
++			}
+                     }
+                     $PATH['subs'][$path] = array('display' => $path,
