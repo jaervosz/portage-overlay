@@ -1,0 +1,108 @@
+# ChangeLog for app-crypt/ekeyd
+# Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
+# $Header: /var/cvsroot/gentoo-x86/app-crypt/ekeyd/ChangeLog,v 1.16 2010/09/29 23:54:46 flameeyes Exp $
+
+*ekeyd-1.1.3-r1 (29 Sep 2010)
+
+  29 Sep 2010; Diego E. Pettenò <flameeyes@gentoo.org>
+  +ekeyd-1.1.3-r1.ebuild, +files/ekeyd-1.1.3-libusb_compat.patch,
+  metadata.xml:
+  Add patch to that worksaround a libusb-compat bug and allows using the
+  virtual with ekeyd-ulusbd.
+
+*ekeyd-1.1.3 (24 Sep 2010)
+
+  24 Sep 2010; Diego E. Pettenò <flameeyes@gentoo.org>
+  -ekeyd-1.1.1-r1.ebuild, -ekeyd-1.1.2.ebuild, +ekeyd-1.1.3.ebuild:
+  Version bump, add ChangeLog to the list of installed doc files. Cleanup
+  old versions.
+
+*ekeyd-1.1.2 (25 Aug 2010)
+
+  25 Aug 2010; Diego E. Pettenò <flameeyes@gentoo.org> +ekeyd-1.1.2.ebuild:
+  Version bump.
+
+*ekeyd-1.1.1-r1 (07 Aug 2010)
+
+  07 Aug 2010; Diego E. Pettenò <flameeyes@gentoo.org> -ekeyd-1.1.1.ebuild,
+  +ekeyd-1.1.1-r1.ebuild, +files/ekeyd-1.1.1-earlyboot.patch:
+  Revision bump, add a patch to use /dev for sockets and pid files, inspired
+  by mdadm, so that it works even if the rule is started early when / is yet
+  to be pivoted or mounted r/w.
+
+  24 Nov 2009; Robin H. Johnson <robbat2@gentoo.org> ekeyd-1.1.1.ebuild:
+  Diego reports that while it compiles against libusb-compat, it does not
+  seem to work presently. Change depend for now until I have hardware access
+  to fix it properly.
+
+*ekeyd-1.1.1 (17 Nov 2009)
+
+  17 Nov 2009; Diego E. Pettenò <flameeyes@gentoo.org>
+  -ekeyd-1.0.6-r1.ebuild, -ekeyd-1.0.7.ebuild, -ekeyd-1.1.0.ebuild,
+  +ekeyd-1.1.1.ebuild:
+  Version bump, remove older versions (would be stabled only when upstream
+  stops releasing new ones for a while).
+
+  16 Nov 2009; Diego E. Pettenò <flameeyes@gentoo.org>
+  ekeyd-1.0.6-r1.ebuild, ekeyd-1.0.7.ebuild, ekeyd-1.1.0.ebuild:
+  Make the linux-info check non fatal since the code builds anyway.
+
+  11 Nov 2009; Robin H. Johnson <robbat2@gentoo.org> ekeyd-1.0.6-r1.ebuild,
+  ekeyd-1.0.7.ebuild, ekeyd-1.1.0.ebuild:
+  Compiles fine against libusb-compat, changing to virtual/libusb:0.
+
+*ekeyd-1.1.0 (09 Nov 2009)
+
+  09 Nov 2009; Diego E. Pettenò <flameeyes@gentoo.org> +ekeyd-1.1.0.ebuild:
+  Version bump.
+
+*ekeyd-1.0.7 (15 Oct 2009)
+
+  15 Oct 2009; Diego E. Pettenò <flameeyes@gentoo.org> +ekeyd-1.0.7.ebuild:
+  Version bump.
+
+  09 Oct 2009; Diego E. Pettenò <flameeyes@gentoo.org>
+  ekeyd-1.0.6-r1.ebuild:
+  Remove pointless keepdir.
+
+*ekeyd-1.0.6-r1 (04 Oct 2009)
+
+  04 Oct 2009; Diego E. Pettenò <flameeyes@gentoo.org> -ekeyd-1.0.6.ebuild,
+  +ekeyd-1.0.6-r1.ebuild, files/ekey-ulusbd.init, files/ekeyd.init:
+  Revision bump to fix the init scripts, require localmount to be completed
+  before starting or ekeyd will not start. Also drop udev dependency on the
+  ekey-ulusbd init script since it's limited to non-Linux systems.
+
+*ekeyd-1.0.6 (29 Sep 2009)
+
+  29 Sep 2009; Diego E. Pettenò <flameeyes@gentoo.org>
+  -ekeyd-1.0.5-r2.ebuild, +ekeyd-1.0.6.ebuild:
+  Version bump.
+
+*ekeyd-1.0.5-r2 (29 Sep 2009)
+
+  29 Sep 2009; Diego E. Pettenò <flameeyes@gentoo.org>
+  -ekeyd-1.0.5-r1.ebuild, +ekeyd-1.0.5-r2.ebuild, files/ekey-ulusbd.conf,
+  files/ekey-ulusbd.init:
+  New revision, thanks to the comments from Rob Kendrick (upstream); the
+  init script now uses lsusb, and is only installed for non-Linux systems,
+  while the correct udev rules are installed on Linux. Add a check for the
+  CDC driver, and also add warnings about both the userland USB and CDC
+  options.
+
+*ekeyd-1.0.5-r1 (28 Sep 2009)
+
+  28 Sep 2009; Diego E. Pettenò <flameeyes@gentoo.org> -ekeyd-1.0.5.ebuild,
+  +ekeyd-1.0.5-r1.ebuild, +files/ekey-ulusbd.conf, +files/ekey-ulusbd.init,
+  files/ekeyd.init:
+  Bump already, add init script for the userland USB daemon, and move the
+  two daemon executables in /usr/libexec.
+
+*ekeyd-1.0.5 (28 Sep 2009)
+
+  28 Sep 2009; Diego E. Pettenò <flameeyes@gentoo.org> +ekeyd-1.0.5.ebuild,
+  +files/ekeyd.init, +metadata.xml:
+  Initial import of the EntropyKey daemon; this is still a work-in-progress
+  ebuild, as it lacks an init script for the USB userland driver, and checks
+  for Linux kernel options for CDC modem support.
+
