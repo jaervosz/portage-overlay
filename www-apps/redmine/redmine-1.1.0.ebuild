@@ -26,7 +26,7 @@ ruby_add_rdepend openid dev-ruby/ruby-openid
 #ruby_add_rdepend passenger "=dev-ruby/rack-1.0.1* www-apache/passenger"
 
 RDEPEND="${RDEPEND}
-	passenger? ( =dev-ruby/rack-1.1.0* www-apache/passenger )
+	passenger? ( =dev-ruby/rack-1.0.1* www-apache/passenger )
 	dev-ruby/activerecord:2.3[mysql?,postgres?,sqlite3?]
 	cvs? ( >=dev-vcs/cvs-1.12 )
 	darcs? ( dev-vcs/darcs )
