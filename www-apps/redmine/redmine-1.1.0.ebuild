@@ -15,7 +15,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="cvs darcs fastcgi git imagemagick mercurial mysql openid passenger postgres sqlite3 subversion"
 
-ruby_add_rdepend "~dev-ruby/rails-2.3.5:2.3
+ruby_add_rdepend "~dev-ruby/rails-2.3.10:2.3
 	>=dev-ruby/coderay-0.7.6.227
 	>=dev-ruby/rubygems-1.3.5
 	>=dev-ruby/ruby-net-ldap-0.0.4"
