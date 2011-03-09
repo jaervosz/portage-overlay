@@ -46,6 +46,10 @@ src_install() {
 	dodir ${siteruby}/mcollective/rpc
 	dodir ${siteruby}/mcollective/security
 	dodir ${siteruby}/mcollective/logger
+	dodir ${siteruby}/mcollective/vendor
+	#dodir ${siteruby}/mcollective/vendor/systemu
+	dodir ${siteruby}/mcollective/vendor/systemu/lib
+	dodir ${siteruby}/mcollective/vendor/systemu/samples
 	
 	insinto ${siteruby}
 	cd ${S}/lib
@@ -77,6 +81,18 @@ src_install() {
 	
 	insinto ${siteruby}/mcollective/security
 	cd ${S}/lib/mcollective/security
+	doins *.rb
+
+	insinto ${siteruby}/mcollective/vendor
+	cd ${S}/lib/mcollective/vendor
+	doins *.rb
+
+	insinto ${siteruby}/mcollective/vendor/systemu/lib
+	cd ${S}/lib/mcollective/vendor/systemu/lib
+	doins *.rb
+
+	insinto ${siteruby}/mcollective/vendor/systemu/samples
+	cd ${S}/lib/mcollective/vendor/systemu/samples
 	doins *.rb
 
 	dodir /usr/share/mcollective

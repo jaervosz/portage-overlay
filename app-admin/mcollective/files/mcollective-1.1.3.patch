@@ -1,6 +1,9 @@
---- etc/client.cfg.dist.orig	2011-02-08 16:22:09.953081956 -0500
-+++ etc/client.cfg.dist	2011-02-08 16:30:50.832488363 -0500
-@@ -1,17 +1,36 @@
+--- etc/client.cfg.dist.orig	2011-03-08 07:27:20.123730986 -0500
++++ etc/client.cfg.dist	2011-03-08 07:28:00.823106115 -0500
+@@ -1,17 +1,38 @@
+-topicprefix = /topic/mcollective
+-libdir = /usr/libexec/mcollective
+-logfile = /dev/null
 +# It's recommended that you do not set host, user, password, or psk
 +# in this file and instead use environment variables, such as the
 +# following:
@@ -13,9 +16,9 @@
 +# If you go this route, you may leave the variables below with "unset" as
 +# the value.
 +# Topic to subscribe to
- topicprefix = /topic/mcollective
--libdir = /usr/libexec/mcollective
--logfile = /dev/null
++topicprefix = /topic/
++main_collective = mcollective
++collectives = mcollective
 +
 +# Plugin location
 +libdir = /usr/share/mcollective
@@ -42,15 +45,18 @@
  
  # Facts
  factsource = yaml
---- etc/server.cfg.dist.orig	2011-02-08 16:36:01.202560022 -0500
-+++ etc/server.cfg.dist	2011-02-08 16:38:08.432477934 -0500
-@@ -1,18 +1,29 @@
+--- etc/server.cfg.dist.orig	2011-03-08 07:27:24.703371306 -0500
++++ etc/server.cfg.dist	2011-03-08 07:28:12.973133167 -0500
+@@ -1,18 +1,31 @@
+-topicprefix = /topic/mcollective
+-libdir = /usr/libexec/mcollective
+-logfile = /var/log/mcollective.log
 +#
 +# THIS FILE SHOULD NOT BE WORLD READABLE
 +#
- topicprefix = /topic/mcollective
--libdir = /usr/libexec/mcollective
--logfile = /var/log/mcollective.log
++topicprefix = /topic/
++main_collective = mcollective
++collectives = mcollective
 +
 +# Plugins location
 +libdir = /usr/share/mcollective
@@ -80,16 +86,3 @@
  
  # Facts
  factsource = yaml
---- ./lib/mcollective.rb.orig	2011-03-08 19:46:07.571746587 +0100
-+++ ./lib/mcollective.rb	2011-03-08 19:46:18.745816353 +0100
-@@ -50,8 +50,8 @@
-     autoload :Application, "mcollective/application"
-     autoload :Applications, "mcollective/applications"
--    autoload :Vendor, "mcollective/vendor"
-+    #autoload :Vendor, "mcollective/vendor"
-     autoload :Shell, "mcollective/shell"
- 
--    MCollective::Vendor.load_vendored
-+    #MCollective::Vendor.load_vendored
- 
-     VERSION="1.1.3"
