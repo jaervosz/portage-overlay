@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/www-apps/b2evolution/b2evolution-2.4.0_rc2.ebuild,v 1.3 2008/02/22 15:43:09 hollow Exp $
 
-inherit webapp eutils depend.php
+EAPI=4
+
+inherit webapp eutils
 
 MY_EXT="stable-2012-04-03"
 MY_PV=${PV/_/-}
@@ -15,24 +17,14 @@ LICENSE="GPL-2"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-RDEPEND=""
+RDEPEND="virtual/httpd-php
+	dev-lang/php[ctype,curl,mysql,tokenizer,xml]"
 DEPEND="${RDEPEND}
 	app-arch/unzip"
 
 need_httpd_cgi
-need_php_httpd
 
 S="${WORKDIR}/${PN}"
-
-pkg_setup() {
-	webapp_pkg_setup
-	has_php
-	if [[ ${PHP_VERSION} == "4" ]]; then
-		require_php_with_use expat tokenizer mysql
-	else
-		require_php_with_use curl ctype xml tokenizer mysql
-	fi
-}
 
 src_install() {
 	webapp_src_preinst
