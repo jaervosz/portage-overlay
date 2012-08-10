@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>
+    gentoo-overlay/main Files - RhodeCode @ megacoffee.net
+</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <meta name="robots" content="index, nofollow"/>
+        <link rel="icon" href="/images/icons/database_gear.png" type="image/png" />
+
+        
+        
+
+        
+            <link rel="stylesheet" type="text/css" href="/css/style.css" media="screen"/>
+            <link rel="stylesheet" type="text/css" href="/css/pygments.css"/>
+            
+        
+        
+
+
+        
+        
+        
+            <script type="text/javascript" src="/js/yui.2.9.js"></script>
+            <!--[if lt IE 9]>
+               <script language="javascript" type="text/javascript" src="/js/excanvas.min.js"></script>
+            <![endif]-->
+            <script type="text/javascript" src="/js/yui.flot.js"></script>
+            <script type="text/javascript" src="/js/rhodecode.js"></script>
+           
+
+            <script type="text/javascript">
+            var follow_base_url  = "/_admin/toggle_following";
+
+            //JS translations map
+            var TRANSLATION_MAP = {
+            	'add another comment':'add another comment',
+                'Stop following this repository':"Stop following this repository",
+                'Start following this repository':"Start following this repository",
+            };
+
+            var onSuccessFollow = function(target){
+                var f = YUD.get(target.id);
+                var f_cnt = YUD.get('current_followers_count');
+
+                if(f.getAttribute('class')=='follow'){
+                    f.setAttribute('class','following');
+                    f.setAttribute('title',TRANSLATION_MAP['Stop following this repository']);
+
+                    if(f_cnt){
+                        var cnt = Number(f_cnt.innerHTML)+1;
+                        f_cnt.innerHTML = cnt;
+                    }
+                }
+                else{
+                    f.setAttribute('class','follow');
+                    f.setAttribute('title',TRANSLATION_MAP['Start following this repository']);
+                    if(f_cnt){
+                        var cnt = Number(f_cnt.innerHTML)+1;
+                        f_cnt.innerHTML = cnt;
+                    }
+                }
+            }
+
+            var toggleFollowingUser = function(target,fallows_user_id,token,user_id){
+                args = 'follows_user_id='+fallows_user_id;
+                args+= '&amp;auth_token='+token;
+                if(user_id != undefined){
+                    args+="&amp;user_id="+user_id;
+                }
+                YUC.asyncRequest('POST',follow_base_url,{
+                    success:function(o){
+                    	onSuccessFollow(target);
+                    }
+                },args);
+                return false;
+            }
+
+            var toggleFollowingRepo = function(target,fallows_repo_id,token,user_id){
+
+                args = 'follows_repo_id='+fallows_repo_id;
+                args+= '&amp;auth_token='+token;
+                if(user_id != undefined){
+                    args+="&amp;user_id="+user_id;
+                }
+                YUC.asyncRequest('POST',follow_base_url,{
+                    success:function(o){
+                    	onSuccessFollow(target);
+                    }
+                },args);
+                return false;
+            }
+           YUE.onDOMReady(function(){
+             tooltip_activate();
+             show_more_event();
+
+             YUE.on('quick_login_link','click',function(e){
+                 // make sure we don't redirect
+                 YUE.preventDefault(e);
+
+                 if(YUD.hasClass('quick_login_link','enabled')){
+                     YUD.setStyle('quick_login','display','none');
+                     YUD.removeClass('quick_login_link','enabled');
+                 }
+                 else{
+                     YUD.setStyle('quick_login','display','');
+                     YUD.addClass('quick_login_link','enabled');
+                     var usr = YUD.get('username');
+                     if(usr){
+                    	 usr.focus();
+                     }
+                 }
+             });
+           })
+            </script>
+        
+    </head>
+    <body id="body">
+      <!--[if IE 7]>
+      <script>YUD.addClass(document.body,'ie7')</script>
+      <![endif]-->
+      <!--[if IE 8]>
+      <script>YUD.addClass(document.body,'ie8')</script>
+      <![endif]-->
+      <!--[if IE 9]>
+      <script>YUD.addClass(document.body,'ie9')</script>
+      <![endif]-->
+
+      
+
+<!-- HEADER -->
+<div id="header">
+    <div id="header-inner" class="title hover">
+        <div id="logo">
+            <h1><a href="/">RhodeCode @ megacoffee.net</a></h1>
+        </div>
+        <!-- MENU -->
+        
+    
+		
+	        <ul id="quick">
+				<!-- repo switcher -->
+				<li>
+					<a class="menu_link" id="repo_switcher" title="Switch repository" href="#">
+                    <span class="icon">
+                        <img src="/images/icons/database.png" alt="Products" />
+                    </span>
+                    <span>&darr;</span>
+					</a>
+					<ul id="repo_switcher_list" class="repo_switcher">
+                        <li>
+                            <a href="#">loading...</a>
+                        </li>
+					</ul>
+				</li>
+
+	            <li >
+	               <a class="menu_link" title="Summary" href="/gentoo-overlay/main/summary">
+	               <span class="icon">
+	                   <img src="/images/icons/clipboard_16.png" alt="Summary" />
+	               </span>
+	               <span>Summary</span>
+	               </a>
+	            </li>
+                <li >
+                   <a class="menu_link" title="Changelog" href="/gentoo-overlay/main/changelog">
+                   <span class="icon">
+                       <img src="/images/icons/time.png" alt="Changelog" />
+                   </span>
+                   <span>Changelog</span>
+                   </a>
+                </li>
+
+                <li >
+                   <a class="menu_link" id="branch_tag_switcher" title="Switch to" href="#">
+                   <span class="icon">
+                       <img src="/images/icons/arrow_switch.png" alt="Switch to" />
+                   </span>
+                   <span>Switch to</span>
+                   </a>
+                    <ul id="switch_to_list" class="switch_to">
+                        <li><a href="#">loading...</a></li>
+                    </ul>
+                </li>
+                <li class="current">
+                   <a class="menu_link" title="Files" href="/gentoo-overlay/main/files/tip/">
+                   <span class="icon">
+                       <img src="/images/icons/file.png" alt="Files" />
+                   </span>
+                   <span>Files</span>
+                   </a>
+                </li>
+
+                <li >
+                   <a class="menu_link" title="Options" href="#">
+                   <span class="icon">
+                       <img src="/images/icons/table_gear.png" alt="Admin" />
+                   </span>
+                   <span>Options</span>
+                   </a>
+                   <ul>
+                   	<li><a class="fork" href="/gentoo-overlay/main/fork">fork</a></li>
+                   	<li><a class="search" href="/_admin/search/gentoo-overlay/main">search</a></li>
+
+                   </ul>
+                </li>
+
+                <li>
+                    <a class="menu_link" title="Followers" href="/gentoo-overlay/main/followers">
+                    <span class="icon_short">
+                        <img src="/images/icons/heart.png" alt="Followers" />
+                    </span>
+                    <span id="current_followers_count" class="short">1</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menu_link" title="Forks" href="/gentoo-overlay/main/forks">
+                    <span class="icon_short">
+                        <img src="/images/icons/arrow_divide.png" alt="Forks" />
+                    </span>
+                    <span class="short">1</span>
+                    </a>
+                </li>
+                
+  <div class="user-menu">
+      <div class="container">
+       <div class="gravatar" id="quick_login_link">
+           <img alt="gravatar" src="/images/user24.png" />
+       </div>
+      </div>
+      <div id="quick_login" style="display:none">
+            <h4>Login to your account</h4>
+            <form action="/_admin/login?came_from=%2Fgentoo-overlay%2Fmain%2Ffiles%2Fa944beec37c511bec6b1fd732d2cdac35d35ec84%2Fmedia-tv%2Fplex-media-server%2Ffiles%2Fstart_pms_1.patch" method="post">
+            <div class="form">
+                <div class="fields">
+                    <div class="field">
+                        <div class="label">
+                            <label for="username">Username:</label>
+                        </div>
+                        <div class="input">
+                            <input class="focus" id="username" name="username" size="40" type="text" />
+                        </div>
+
+                    </div>
+                    <div class="field">
+                        <div class="label">
+                            <label for="password">Password:</label>
+                        </div>
+                        <div class="input">
+                            <input class="focus" id="password" name="password" size="40" type="password" />
+                        </div>
+
+                    </div>
+                    <div class="buttons">
+                        <div class="password_forgoten"><a href="/_admin/password_reset">Forgot password ?</a></div>
+                        <div class="register">
+                        </div>
+                        <div class="submit">
+                            <input class="ui-btn xsmall" id="sign_in" name="sign_in" type="submit" value="Log In" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+      </div>
+ </div>
+
+	        </ul>
+            <script type="text/javascript">
+               YUE.on('repo_switcher','mouseover',function(){
+                      function qfilter(){
+                          var nodes = YUQ('ul#repo_switcher_list li a.repo_name');
+                          var target = 'q_filter_rs';
+                          var func = function(node){
+                              return node.parentNode;
+                          }
+                          q_filter(target,nodes,func);
+                      }
+                   var loaded = YUD.hasClass('repo_switcher','loaded');
+                   if(!loaded){
+                       YUD.addClass('repo_switcher','loaded');
+                       ypjax("/repos",'repo_switcher_list',
+                           function(o){qfilter();},
+                           function(o){YUD.removeClass('repo_switcher','loaded');}
+                           ,null);
+                   }
+                   return false;
+               });
+
+              YUE.on('branch_tag_switcher','mouseover',function(){
+                 var loaded = YUD.hasClass('branch_tag_switcher','loaded');
+                 if(!loaded){
+                     YUD.addClass('branch_tag_switcher','loaded');
+                     ypjax("/branches-tags/gentoo-overlay/main",'switch_to_list',
+                         function(o){},
+                         function(o){YUD.removeClass('branch_tag_switcher','loaded');}
+                         ,null);
+                 }
+                 return false;
+              });
+            </script>
+
+
+        <!-- END MENU -->
+        
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+<!-- END HEADER -->
+
+<!-- CONTENT -->
+<div id="content">
+    <div class="flash_msg">
+        
+    </div>
+    <div id="main">
+        
+<div class="box">
+    <!-- box / title -->
+    <div class="title">
+        
+    <div class="breadcrumbs">
+    
+    <a href="/">Home</a>
+    &raquo;
+    <a href="/gentoo-overlay/main/files/tip/">gentoo-overlay/main</a>
+    &raquo;
+    files
+        @ r20:a944beec37c5
+
+    </div>
+
+	    <ul class="links">
+		    <li>
+		      <span style="text-transform: uppercase;"><a href="#">branch: default</a></span>
+	        </li>
+	    </ul>
+    </div>
+    <div class="table">
+		<div id="files_data">
+			    <h3 class="files_location">
+        Location: <a href="/gentoo-overlay/main/files/a944beec37c511bec6b1fd732d2cdac35d35ec84/">gentoo-overlay/main</a>/<a href="/gentoo-overlay/main/files/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv">media-tv</a>/<a href="/gentoo-overlay/main/files/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv/plex-media-server">plex-media-server</a>/<a href="/gentoo-overlay/main/files/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv/plex-media-server/files">files</a>/<a href="/gentoo-overlay/main/files/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv/plex-media-server/files/start_pms_1.patch">start_pms_1.patch</a>
+    </h3>
+            <dl>
+	<dt style="padding-top:10px;font-size:16px">History</dt>
+	<dd>
+		<div>
+		<form action="/gentoo-overlay/main/diff/media-tv/plex-media-server/files/start_pms_1.patch" method="get">
+		<input id="diff2" name="diff2" type="hidden" value="a944beec37c511bec6b1fd732d2cdac35d35ec84" />
+		<select id="diff1" name="diff1">
+<optgroup label="Changesets">
+<option value="60c9e5c6cdce5f054aacd0f9f3a9ed83756be42e">r11:60c9e5c6cdce (default)</option>
+</optgroup>
+<optgroup label="Branches">
+<option selected="selected" value="a944beec37c511bec6b1fd732d2cdac35d35ec84">default</option>
+</optgroup>
+<optgroup label="Tags">
+<option selected="selected" value="a944beec37c511bec6b1fd732d2cdac35d35ec84">tip</option>
+</optgroup>
+</select>
+		<input class="ui-btn" id="diff" name="diff" type="submit" value="diff to revision" />
+		<input class="ui-btn" id="show_rev" name="show_rev" type="submit" value="show at revision" />
+		</form>
+		</div>
+	</dd>
+</dl>
+
+<div id="body" class="codeblock">
+	<div class="code-header">
+        <div class="stats">
+            <div class="left img"><img src="/images/icons/file.png"/></div>
+            <div class="left item"><pre class="tooltip" title="2012-08-07 00:01:07"><a href="/gentoo-overlay/main/changeset/a944beec37c511bec6b1fd732d2cdac35d35ec84">r20:a944beec37c5</a></pre></div>
+            <div class="left item"><pre>764 B</pre></div>
+            <div class="left item last"><pre>text/plain</pre></div>
+            <div class="buttons">
+                <a class="ui-btn" href="/gentoo-overlay/main/annotate/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv/plex-media-server/files/start_pms_1.patch">show annotation</a>
+              <a class="ui-btn" href="/gentoo-overlay/main/raw/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv/plex-media-server/files/start_pms_1.patch">show as raw</a>
+              <a class="ui-btn" href="/gentoo-overlay/main/rawfile/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv/plex-media-server/files/start_pms_1.patch">download as raw</a>
+            </div>
+        </div>
+        <div class="author">
+            <div class="gravatar">
+                <img alt="gravatar" src="http://www.gravatar.com/avatar/ad0005a947d55c3fab0692957656475c?s=16&amp;d=identicon"/>
+            </div>
+            <div title="gsnerf &lt;gsnerf@gsnerf.de&gt;" class="user">gsnerf</div>
+        </div>
+		<div class="commit">merge</div>
+	</div>
+	<div class="code-body">
+			  <table class="code-highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><a href="#L1"> 1</a>
+<a href="#L2"> 2</a>
+<a href="#L3"> 3</a>
+<a href="#L4"> 4</a>
+<a href="#L5"> 5</a>
+<a href="#L6"> 6</a>
+<a href="#L7"> 7</a>
+<a href="#L8"> 8</a>
+<a href="#L9"> 9</a>
+<a href="#L10">10</a>
+<a href="#L11">11</a>
+<a href="#L12">12</a>
+<a href="#L13">13</a>
+<a href="#L14">14</a>
+<a href="#L15">15</a>
+<a href="#L16">16</a>
+<a href="#L17">17</a>
+<a href="#L18">18</a>
+<a href="#L19">19</a></pre></div></td><td id="hlcode" class="code"><div class="code-highlight"><pre><div id="L1"><a name="L-1"></a>*** start_pms_old	2012-06-30 12:06:14.000000000 +0200
+</div><div id="L2"><a name="L-2"></a><span class="gd">--- start_pms	2012-06-30 12:08:33.000000000 +0200</span>
+</div><div id="L3"><a name="L-3"></a>***************
+</div><div id="L4"><a name="L-4"></a>*** 7,13 ****
+</div><div id="L5"><a name="L-5"></a>  export PLEX_MEDIA_SERVER_TMPDIR=/tmp
+</div><div id="L6"><a name="L-6"></a>  export PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR=&quot;${HOME}/Library/Application Support&quot;
+</div><div id="L7"><a name="L-7"></a>  
+</div><div id="L8"><a name="L-8"></a><span class="gs">! test -f /etc/default/plexmediaserver &amp;&amp; . /etc/default/plexmediaserver</span>
+</div><div id="L9"><a name="L-9"></a>  
+</div><div id="L10"><a name="L-10"></a>  export LD_LIBRARY_PATH=&quot;${PLEX_MEDIA_SERVER_HOME}&quot;
+</div><div id="L11"><a name="L-11"></a>  export TMPDIR=&quot;${PLEX_MEDIA_SERVER_TMPDIR}&quot;
+</div><div id="L12"><a name="L-12"></a><span class="gd">--- 7,13 ----</span>
+</div><div id="L13"><a name="L-13"></a>  export PLEX_MEDIA_SERVER_TMPDIR=/tmp
+</div><div id="L14"><a name="L-14"></a>  export PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR=&quot;${HOME}/Library/Application Support&quot;
+</div><div id="L15"><a name="L-15"></a>  
+</div><div id="L16"><a name="L-16"></a><span class="gs">! test -f /etc/plex/plexmediaserver.conf &amp;&amp; . /etc/plex/plexmediaserver.conf</span>
+</div><div id="L17"><a name="L-17"></a>  
+</div><div id="L18"><a name="L-18"></a>  export LD_LIBRARY_PATH=&quot;${PLEX_MEDIA_SERVER_HOME}&quot;
+</div><div id="L19"><a name="L-19"></a>  export TMPDIR=&quot;${PLEX_MEDIA_SERVER_TMPDIR}&quot;
+</div></pre></div>
+</td></tr></table>
+	</div>
+</div>
+
+<script type="text/javascript">
+YUE.onDOMReady(function(){
+    function highlight_lines(lines){
+        for(pos in lines){
+          YUD.setStyle('L'+lines[pos],'background-color','#FFFFBE');
+        }
+    }
+    page_highlights = location.href.substring(location.href.indexOf('#')+1).split('L');
+    if (page_highlights.length == 2){
+       highlight_ranges  = page_highlights[1].split(",");
+
+       var h_lines = [];
+       for (pos in highlight_ranges){
+            var _range = highlight_ranges[pos].split('-');
+            if(_range.length == 2){
+                var start = parseInt(_range[0]);
+                var end = parseInt(_range[1]);
+                if (start < end){
+                    for(var i=start;i<=end;i++){
+                        h_lines.push(i);
+                    }
+                }
+            }
+            else{
+                h_lines.push(parseInt(highlight_ranges[pos]));
+            }
+      }
+    highlight_lines(h_lines);
+
+    //remember original location
+    var old_hash  = location.href.substring(location.href.indexOf('#'));
+
+    // this makes a jump to anchor moved by 3 posstions for padding
+    window.location.hash = '#L'+Math.max(parseInt(h_lines[0])-3,1);
+
+    //sets old anchor
+    window.location.hash = old_hash;
+
+    }
+    YUE.on('show_rev','click',function(e){
+    	YUE.preventDefault(e);
+        var cs = YUD.get('diff1').value;
+          var url = "/gentoo-overlay/main/files/__CS__/media-tv/plex-media-server/files/start_pms_1.patch".replace('__CS__',cs);
+        window.location = url;
+    });
+    YUE.on('hlcode','mouseup',getSelectionLink("Selection link"))
+   });
+</script>
+
+
+		</div>
+    </div>
+</div>
+<script type="text/javascript">
+var YPJAX_TITLE = "gentoo-overlay/main Files - RhodeCode @ megacoffee.net";
+var current_url = "/gentoo-overlay/main/files/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv/plex-media-server/files/start_pms_1.patch";
+var node_list_url = '/gentoo-overlay/main/files/a944beec37c511bec6b1fd732d2cdac35d35ec84/__FPATH__';
+var url_base = '/gentoo-overlay/main/nodelist/a944beec37c511bec6b1fd732d2cdac35d35ec84/media-tv/plex-media-server/files/start_pms_1.patch';
+var truncated_lbl = "search truncated";
+var nomatch_lbl = "no matching files";
+fileBrowserListeners(current_url, node_list_url, url_base, truncated_lbl, nomatch_lbl);
+</script>
+
+    </div>
+</div>
+<!-- END CONTENT -->
+
+<!-- FOOTER -->
+<div id="footer">
+   <div id="footer-inner" class="title">
+       <div>
+           <p class="footer-link">
+                <a href="http://bitbucket.org/marcinkuzminski/rhodecode/issues">Submit a bug</a>
+           </p>
+	       <p class="footer-link-right">
+	           <a href="http://rhodecode.org">RhodeCode</a>
+	           1.3.6 &copy; 2010-2012 by Marcin Kuzminski
+	       </p>
+       </div>
+   </div>
+</div>
+<!-- END FOOTER -->
+
+
+
+
+
+
+
+
+
+    </body>
+</html>
