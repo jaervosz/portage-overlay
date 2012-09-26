@@ -27,19 +27,19 @@ pkg_setup() {
 
 pkg_preinst() {
 	einfo "Unpacking DEB File"
-	cd ${WORKDIR}
-	ar x ${DISTDIR}/${A}
-        mkdir data
-        mkdir control
-        tar -xzf data.tar.gz -C data
-        tar -xzf control.tar.gz -C control
+	cd "${WORKDIR}"
+	ar x "${DISTDIR}/${A}"
+	mkdir data
+	mkdir control
+	tar -xzf data.tar.gz -C data
+	tar -xzf control.tar.gz -C control
 
 	einfo "Preparing files for installation"
 	# replace debian specific init scripts with gentoo specific ones
-        rm data/etc/init.d/plexmediaserver
+	rm data/etc/init.d/plexmediaserver
 	rm -r data/etc/init
 	cp "${FILESDIR}"/pms_initd_1 data/etc/init.d/plex-media-server
-        chmod 755 data/etc/init.d/plex-media-server
+	chmod 755 data/etc/init.d/plex-media-server
 	# move the config to the correct place
 	mkdir data/etc/plex
 	mv data/etc/default/plexmediaserver data/etc/plex/plexmediaserver.conf
@@ -50,20 +50,20 @@ pkg_preinst() {
 	cd ../../..
 	# remove debian specific useless files
 	rm data/usr/share/doc/plexmediaserver/README.Debian
-        # as the patch doesn't seem to correctly set the permissions on new files do this now
+	# as the patch doesn't seem to correctly set the permissions on new files do this now
 	# now copy to image directory for actual installation
-	cp -R data/* ${D}
+	cp -R data/* "${D}"
 
 	# make sure the logging directory is created
-	mkdir ${D}var
-	mkdir ${D}var/log
-	mkdir ${D}var/log/pms
+	mkdir "${D}"var
+	mkdir "${D}"var/log
+	mkdir "${D}"var/log/pms
 	chown plex:plex ${D}var/log/pms
 
 	# also make sure the default library folder is pre created with correct permissions
-	mkdir ${D}var/lib
-	mkdir ${D}var/lib/plexmediaserver
-	chown plex:plex ${D}var/lib/plexmediaserver
+	mkdir "${D}"var/lib
+	mkdir "${D}"var/lib/plexmediaserver
+	chown plex:plex "${D}"var/lib/plexmediaserver
 
 	einfo "Stopping running instances of Media Server"
 	if [ -e "${INIT_SCRIPT}" ]; then
