@@ -1,4 +1,4 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -6,7 +6,7 @@ EAPI="2"
 
 inherit eutils
 
-DESCRIPTION="Plex Media Server is a free media library that is intended for use with a plex client available for OS X, iOS and Android systems. It is a standalone product which can be used in conjunction with every program, that knows the API. For managing the library a web based interface is provided."
+DESCRIPTION="Plex Media Server is a free media library for use with clients available for OS X, iOS and Android."
 HOMEPAGE="http://www.plexapp.com/"
 KEYWORDS="-* ~x86 ~amd64"
 SRC_URI="x86?	( http://www.plexapp.com/repo/pool/main/p/plexmediaserver/plexmediaserver_0.9.6.7.204-266f05d_i386.deb )
@@ -58,7 +58,7 @@ pkg_preinst() {
 	mkdir "${D}"var
 	mkdir "${D}"var/log
 	mkdir "${D}"var/log/pms
-	chown plex:plex ${D}var/log/pms
+	chown plex:plex "${D}"var/log/pms
 
 	# also make sure the default library folder is pre created with correct permissions
 	mkdir "${D}"var/lib
@@ -73,7 +73,7 @@ pkg_preinst() {
 
 pkg_prerm() {
 	einfo "Stopping running instances of Media Server"
-        if [ -e "${INIT_SCRIPT}" ]; then
-                ${INIT_SCRIPT} stop
-        fi
+	if [ -e "${INIT_SCRIPT}" ]; then
+		${INIT_SCRIPT} stop
+	fi
 }
