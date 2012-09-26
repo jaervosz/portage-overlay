@@ -1,0 +1,47 @@
+--- a/extra/locale/gen_wc8bit.c
++++ b/extra/locale/gen_wc8bit.c
+@@ -99,31 +99,29 @@
+ 	int total_size = 0;
+ 
+ 	if (!setlocale(LC_CTYPE, "en_US.UTF-8")) {
+-		/* Silly foreigners disabling en_US locales */
+-		FILE *fp = popen("locale -a", "r");
+-		if (!fp)
+-			goto locale_failure;
+-
+-		while (!feof(fp)) {
++		/* setlocale might be just a stub */
++		fp = popen("locale -a", "r");
++		if (!fp) {
++			printf("#error could not execute 'locale -a'\n");
++                        return EXIT_FAILURE;
++		}
++		
++	/*	while (!feof(fp)) {
+ 			char buf[256];
+ 			size_t len;
+ 
+-			if (fgets(buf, sizeof(buf) - 10, fp) == NULL)
+-				goto locale_failure;
++			if (fgets(buf, sizeof(buf) - 10, fp) == NULL) {
++				printf("#error could not read 'locale -a' output buffer\n");
++				return EXIT_FAILURE;
++			}
+ 
+ 			len = strlen(buf);
+ 			if (len > 0 && buf[len - 1] == '\n')
+ 				buf[--len] = '\0';
+ 			if (len < 5 || strcasecmp(&buf[len-5], ".UTF8") != 0)
+ 				strcat(buf, ".UTF8");
+-			if (setlocale(LC_CTYPE, buf))
+-				goto locale_success;
+ 		}
+-
+- locale_failure:
+-		printf("could not find a UTF8 locale ... please enable en_US.UTF-8\n");
+-		return EXIT_FAILURE;
+- locale_success:
++	*/	
+ 		pclose(fp);
+ 	}
+ 

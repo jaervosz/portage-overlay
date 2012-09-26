@@ -1,0 +1,25 @@
+--- libc/sysdeps/linux/common/ppoll.c.orig	2011-11-03 19:22:18.000000000 +0100
++++ libc/sysdeps/linux/common/ppoll.c	2011-11-03 19:24:40.000000000 +0100
+@@ -18,4 +18,5 @@
+    02111-1307 USA.  */
+ 
++#include <signal.h>
+ #include <sys/syscall.h>
+ #include <sys/poll.h>
+@@ -27,7 +28,7 @@
+ # define __NR___libc_ppoll __NR_ppoll
+ static __always_inline
+-_syscall4(int, __libc_ppoll, struct pollfd *, fds,
++_syscall5(int, __libc_ppoll, struct pollfd *, fds,
+ 	nfds_t, nfds, const struct timespec *, timeout,
+-	const __sigset_t *, sigmask)
++	const __sigset_t *, sigmask, size_t, sigsetsize)
+ 
+ int
+@@ -44,5 +45,5 @@
+     }
+ 
+-  return __libc_ppoll(fds, nfds, timeout, sigmask);
++  return __libc_ppoll(fds, nfds, timeout, sigmask, _NSIG / 8);
+ }
+ libc_hidden_def(ppoll)

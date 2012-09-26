@@ -1,0 +1,42 @@
+***************
+*** 170,175 ****
+                 epatch "${WORKDIR}"/patch
+         fi
+  
+         sed -i 's:getline:get_line:' extra/scripts/unifdef.c #277186
+  
+         ########## CPU SELECTION ##########
+--- 173,182 ----
+                 epatch "${WORKDIR}"/patch
+         fi
+  
++        epatch "${FILESDIR}"/${PN}-${PV}-clean.patch
++        epatch "${FILESDIR}"/gen_wc8bit.patch
++        epatch "${FILESDIR}"/gen_wctype.patch
++ 
+         sed -i 's:getline:get_line:' extra/scripts/unifdef.c #277186
+  
+         ########## CPU SELECTION ##########
+***************
+*** 305,310 ****
+         cp .config myconfig
+  
+         emake -s clean > /dev/null || die "could not clean"
+  }
+  
+  
+--- 312,325 ----
+         cp .config myconfig
+  
+         emake -s clean > /dev/null || die "could not clean"
++ 
++        # TODO: These should depend on some useflag, eg iconv
++        # Run after make clean, otherwise files removed
++        find ./extra/locale/charmaps -name "*.pairs" > extra/locale/codesets.txt
++        #cp ./extra/locale/LOCALES ./extra/locale/locales.txt
++        cp "${FILESDIR}"/locales.txt ./extra/locale/locales.txt
++        # TODO: Now edit locales as appropriate...
++        # FIXME: ...
+  }
+  
+  

@@ -1,0 +1,22 @@
+# First some @modifier mappings.  Internally, the modifier is signaled by
+# replacing '_' in the locale name with a unique identifying character.
+# For example, internally we map "ca_ES@euro" to "caeES".  This allows for
+# smaller code and easier processing of locale names.
+
+@euro e
+@cyrillic c
+
+#---------------------------------------------------------------------------
+# Next, set to {y}es to enable and {n}o to disable the UTF-8 and the 8-bit
+# codeset locales.  Of course, you must have built the c8tables.h and
+# the wctables.h files appropriately.
+
+
+UTF-8 yes
+8-BIT yes
+
+#---------------------------------------------------------------------------
+# Now the locales
+
+en_GB ISO-8859-1
+en_GB.UTF-8 UTF-8
