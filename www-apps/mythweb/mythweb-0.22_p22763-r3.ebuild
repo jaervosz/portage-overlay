@@ -7,7 +7,7 @@ inherit mythtv webapp depend.php
 
 DESCRIPTION="PHP scripts intended to manage MythTV from a web browser."
 IUSE=""
-KEYWORDS="amd64 ppc x86"
+KEYWORDS="~amd64 ~ppc ~x86"
 
 RDEPEND="dev-perl/DBI
 	dev-perl/DBD-mysql
