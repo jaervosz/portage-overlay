@@ -1,0 +1,45 @@
+Index: piwik/core/ViewDataTable/HtmlTable.php
+===================================================================
+--- piwik/core/ViewDataTable/HtmlTable.php	(revision 7035)
++++ piwik/core/ViewDataTable/HtmlTable.php	(revision 7036)
+@@ -226,3 +226,11 @@
+ 		$this->variablesDefault['disable_row_evolution'] = true;
+ 	}
++	
++	/**
++	 * Disables row actions.
++	 */
++	public function disableRowActions()
++	{
++		$this->variablesDefault['disable_row_actions'] = true;
++	}
+ }
+Index: piwik/plugins/CoreHome/templates/datatable_rowactions.js
+===================================================================
+--- piwik/plugins/CoreHome/templates/datatable_rowactions.js	(revision 7035)
++++ piwik/plugins/CoreHome/templates/datatable_rowactions.js	(revision 7036)
+@@ -21,4 +21,9 @@
+ 	
+ 	getAvailableActions: function(dataTableParams, tr) {
++		if (dataTableParams.disable_row_actions == '1')
++		{
++			return [];
++		}
++		
+ 		var available = [];
+ 		for (var i = 0; i < this.registry.length; i++) {
+Index: piwik/plugins/Live/Controller.php
+===================================================================
+--- piwik/plugins/Live/Controller.php	(revision 7035)
++++ piwik/plugins/Live/Controller.php	(revision 7036)
+@@ -78,4 +78,10 @@
+ 		$view->disableShowExportAsRssFeed();
+ 		
++		// disable all row actions
++		if ($view instanceof Piwik_ViewDataTable_HtmlTable)
++		{
++			$view->disableRowActions();
++		}
++		
+ 		$view->setReportDocumentation(Piwik_Translate('Live_VisitorLogDocumentation', array('<br />', '<br />')));
+ 		$view->setCustomParameter('dataTablePreviousIsFirst', 1);
