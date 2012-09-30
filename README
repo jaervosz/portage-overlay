@@ -1,0 +1,7 @@
+This is my personal Gentoo ebuild overlay used for various projects.
+
+Use this at your own risk!!
+
+At the time of writing you'll find the most current ebuilds for Piwik and B2evolution here.
+
+Also you'll find a few historical ebuilds used for GNAP http://www.gentoo.org/proj/en/base/embedded/gnap.xml until around 2009.
